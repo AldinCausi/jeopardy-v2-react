@@ -94,7 +94,10 @@ export default function CreateBoardPage() {
 
   function handleTileClick(catId, tileId) {
     setEditingTile({ catId, tileId });
-    resetForm();
+
+    const cat = board.find(c => c.catId === catId);
+    const tile = cat.tiles.find(t => t.tileId === tileId);
+    setFormData({ ...formData, ...tile });
   }
 
   function onFormChange(field, value) {
@@ -158,8 +161,10 @@ export default function CreateBoardPage() {
                 <div
                   key={tile.tileId}
                   className="tile"
-                  onClick={() => handleTileClick(cat.catId, tile.tileId)}
-                ></div>
+                  onClick={() => handleTileClick(cat.catId, tile.tileId)}>
+                  <p>{tile.points}</p>
+                  <p>{tile.question}</p>
+                </div>
               ))}
             </div>
           ))}
