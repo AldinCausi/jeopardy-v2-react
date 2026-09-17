@@ -1,0 +1,65 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node modules (Abhängigkeiten - sehr groß, werden über npm install geladen)
+node_modules/
+
+# Vite Build-Output (Der kompilierte Produktionscode)
+dist/
+dist-ssr/
+*.local
+
+# Firebase & Hosting-Dienste (falls du Firebase nutzt)
+.firebase/
+
+# IDEs und Editoren (Konfigurationen deines Code-Editors)
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Betriebssystem-Dateien
+.DS_Store
+Thumbs.db
+
+# Sensible Daten / Umgebungsvariablen (NIEMALS hochladen!)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
