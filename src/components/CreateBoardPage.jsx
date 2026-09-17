@@ -3,7 +3,7 @@ import "./CreateBoardPage.css";
 import { useEffect } from "react";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig.js";
-
+import TileForm from "./TileForm.jsx";
 /*
 Fabriken für Board und Form Strukturen.
 */
@@ -62,6 +62,7 @@ export default function CreateBoardPage() {
   useEffect(() => {
     console.log("Board State: ", board);
     console.log("FormData", formData);
+    console.log(editingTile);
   });
 
   /*
@@ -96,6 +97,10 @@ export default function CreateBoardPage() {
     resetForm();
   }
 
+  function onFormChange(field, value) {
+    setFormData({...formData, [field]: value});
+  }
+
   function handleChangeTileData() {
     setBoard(
       board.map((cat) =>
@@ -127,6 +132,8 @@ export default function CreateBoardPage() {
       activeTile: null,
       board: board,
     });
+
+    resetForm();
   }
 
   return (
@@ -166,62 +173,11 @@ export default function CreateBoardPage() {
       </div>
 
       {editingTile && (
-        <div className="form">
-          <input
-            placeholder="Punkte"
-            className="points-input"
-            value={formData.points}
-            onChange={(e) =>
-              setFormData({ ...formData, points: e.target.value })
-            }
-          />
-          <input
-            placeholder="Frage"
-            className="question-input"
-            value={formData.question}
-            onChange={(e) =>
-              setFormData({ ...formData, question: e.target.value })
-            }
-          />
-          <input
-            placeholder="Antwort"
-            className="answer-input"
-            value={formData.answer}
-            onChange={(e) =>
-              setFormData({ ...formData, answer: e.target.value })
-            }
-          />
-          <select
-            className="type-selector"
-            value={formData.type}
-            onChange={(e) =>
-              setFormData({ ...formData, type: e.target.value })
-            }
-          >
-            <option value="text">Textfrage</option>
-            <option value="image">Bildfrage</option>
-          </select>
-
-          {formData.type === "image" && (
-            <input
-              placeholder="Bild-URL"
-              value={formData.imageUrl}
-              onChange={(e) =>
-                setFormData({ ...formData, imageUrl: e.target.value })
-              }
-            />
-          )}
-
-          <button
-            className="save-form-btn"
-            onClick={() => handleChangeTileData()}
-          >
-            Speichern
-          </button>
-          <button className="clear-btn" onClick={() => resetForm()}>
-            Eingabe leeren
-          </button>
-        </div>
+        <TileForm
+          formData={formData}
+          onFormChange={onFormChange}
+          onSaveForm={handleChangeTileData}
+          onFormReset={resetForm} />
       )}
     </>
   );
