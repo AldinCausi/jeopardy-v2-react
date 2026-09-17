@@ -1,0 +1,52 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.7rem;
+
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+}
+
+.form .inputs,
+.from .buttons{
+    width: fit-content;
+}
+
+.form .inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.form .inputs input {
+    border: none;
+    padding: 0.2rem 0.3rem;
+    text-align: center;
+    outline: none;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.form .buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+}
+
+.form .buttons button {
+    border: none;
+    padding: 0.2rem 0.3rem;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.type-selector {
+    font-weight: bold;
+    font-size: 1.5rem;
+}

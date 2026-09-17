@@ -104,6 +104,11 @@ export default function CreateBoardPage() {
     setFormData({ ...formData, [field]: value });
   }
 
+  function handleCancelForm() {
+    setEditingTile(null);
+    resetForm();
+  }
+
   function handleChangeTileData() {
     setBoard(
       board.map((cat) =>
@@ -184,6 +189,7 @@ export default function CreateBoardPage() {
             onFormChange={onFormChange}
             onSaveForm={handleChangeTileData}
             onFormReset={resetForm}
+            onCancel={handleCancelForm}
           />
         )}
       </div>

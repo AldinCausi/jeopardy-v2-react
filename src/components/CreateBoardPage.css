@@ -1,22 +1,27 @@
+:root {
+    --bg-main: #fef3c7;
+    --tile-bg: #ffffff;
+    --accent: #d97706;
+    --accent-hover: hsl(32, 95%, 36%);
+    --text: #78350f;
+}
+
 .main {
     height: 100vh;
-    background-color: blue;
+    background-color: var(--bg-main);
 }
 
 .board-wrapper {
-    height: 80%;
-    display: flex;
+    height: inherit;
+    display: grid;
+    grid-template-rows: 90% 10%;
+    padding: 0.2rem;
 }
 
 .board {
-    width: 90%;
-    border: 1px solid;
-
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 0.5rem;
-
-    background-color: yellow    ;
 }
 
 .category {
@@ -28,27 +33,57 @@
 .category-input {
     display: flex;
     flex-direction: column;
-    align-items: start;
+    align-items: center;
     justify-content: center;
+
+    height: 100%;
 }
 
 .category-input input {
-    width: 100%;
+    padding: 0.5rem;
+    outline: none;
+    font-weight: bold;
+    text-align: center;
+    background-color: var(--tile-bg);
+    color: var(--text);
+}
+
+.category-input button {
+    border: none;
+    padding: 0.3rem 0.5rem;
+    background-color: var(--accent);
+    color: var(--tile-bg);
+}
+
+.category-input button:hover {
+    background-color: var(--accent-hover);
 }
 
 .tile {
-    border: 1px solid;
+    border: 1px solid var(--accent);
     cursor: pointer;
+    background-color: var(--tile-bg);
+    color: var(--text);
 }
 
 .save-btn-container {
-    width: 10%;
-    background-color: red;
+    width: fit-content;
 }
 
-.s
+.save-board-btn {
+    border: none;
+    padding: 1.2rem;
+    background-color: var(--accent);
+    font-weight: bold;
+    font-size: 1.1rem;
+
+    color: var(--tile-bg);
+}
+
+.save-board-btn:hover {
+    background-color: var(--accent-hover);
+}
 
 .form-wrapper {
-    height: auto;
-    background-color: lightblue;
+    height: fit-content;
 }
