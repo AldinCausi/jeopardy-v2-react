@@ -1,20 +1,28 @@
 .main {
     height: 100vh;
+    background-color: blue;
+}
+
+.board-wrapper {
+    height: 80%;
     display: flex;
 }
 
 .board {
-    height: 70%;
     width: 90%;
     border: 1px solid;
 
     display: grid;
     grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+
+    background-color: yellow    ;
 }
 
 .category {
     display: grid;
     grid-template-rows: repeat(6, 1fr);
+    gap: 0.5rem;
 }
 
 .category-input {
@@ -31,4 +39,16 @@
 .tile {
     border: 1px solid;
     cursor: pointer;
+}
+
+.save-btn-container {
+    width: 10%;
+    background-color: red;
+}
+
+.s
+
+.form-wrapper {
+    height: auto;
+    background-color: lightblue;
 }

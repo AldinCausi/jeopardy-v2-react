@@ -98,7 +98,7 @@ export default function CreateBoardPage() {
   }
 
   function onFormChange(field, value) {
-    setFormData({...formData, [field]: value});
+    setFormData({ ...formData, [field]: value });
   }
 
   function handleChangeTileData() {
@@ -116,6 +116,7 @@ export default function CreateBoardPage() {
           : cat,
       ),
     );
+    resetForm();
     setEditingTile(null);
   }
 
@@ -123,7 +124,6 @@ export default function CreateBoardPage() {
   Speichert das Board in Firestore
   */
   function saveBoardToDb() {
-
     // Einzigartiger Code für den Raum
     const roomCode = generateRoomCode();
 
@@ -132,13 +132,11 @@ export default function CreateBoardPage() {
       activeTile: null,
       board: board,
     });
-
-    resetForm();
   }
 
   return (
-    <>
-      <div className="main">
+    <div className="main">
+      <div className="board-wrapper">
         <div className="board">
           {board.map((cat) => (
             <div key={cat.catId} className="category">
@@ -167,18 +165,23 @@ export default function CreateBoardPage() {
           ))}
         </div>
 
-        <button
-          className="save-board-btn"
-          onClick={() => saveBoardToDb()}>Brett Speichern</button>
+        <div className="save-btn-container">
+          <button className="save-board-btn" onClick={() => saveBoardToDb()}>
+            Brett Speichern
+          </button>
+        </div>
       </div>
 
-      {editingTile && (
-        <TileForm
-          formData={formData}
-          onFormChange={onFormChange}
-          onSaveForm={handleChangeTileData}
-          onFormReset={resetForm} />
-      )}
-    </>
+      <div className="form-wrapper">
+        {editingTile && (
+          <TileForm
+            formData={formData}
+            onFormChange={onFormChange}
+            onSaveForm={handleChangeTileData}
+            onFormReset={resetForm}
+          />
+        )}
+      </div>
+    </div>
   );
 }
