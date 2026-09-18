@@ -34,6 +34,7 @@ function createEmptyFormData() {
     answer: "",
     type: "text",
     imageUrl: "",
+    visible: false
   };
 }
 

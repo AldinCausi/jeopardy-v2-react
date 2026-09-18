@@ -1,0 +1,7 @@
+.played {
+    opacity: 0.5;
+}
+
+.question-modal {
+    display: flex;
+}

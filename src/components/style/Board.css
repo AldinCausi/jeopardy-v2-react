@@ -16,6 +16,8 @@
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 0.5rem;
+    padding-left:0.2rem ;
+    padding-right: 0.2rem;
 }
 
 .player-category {
@@ -48,4 +50,14 @@
 .player-tile p {
     font-weight: bold;
     font-size: 1.5rem;
+}
+
+.question-modal {
+    position: fixed;
+    inset: 0;
+
+    background-color: var(--bg-main);
+    align-items: center;
+    justify-content: calc();
+    flex-direction: column;
 }

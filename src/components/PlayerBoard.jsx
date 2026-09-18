@@ -1,28 +1,37 @@
-import "./PlayerBoard.css";
+import "./style/Board.css";
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig.js";
 
 export default function PlayerBoard() {
   const { roomCode } = useParams();
   const [boardExists, setBoardExists] = useState(null);
   const [board, setBoard] = useState(null);
+  const [activeTile, setActiveTile] = useState(null);
 
   useEffect(() => {
-    const getBoard = async () => {
-      const boardRef = doc(db, "boards", roomCode);
-      const boardSnap = await getDoc(boardRef);
-      if (boardSnap.exists()) {
-        setBoardExists(true);
-        setBoard(boardSnap.data());
-      } else {
+    const boardRef = doc(db, "boards", roomCode);
+    const unsub = onSnapshot(boardRef, (snapshot) => {
+      if (!snapshot.exists()) {
         setBoardExists(false);
-        setBoard(null);
+        return;
       }
-    };
-    getBoard();
+      const data = snapshot.data();
+      setBoardExists(true);
+      setBoard(data.board);
+      setActiveTile(data.activeTile ?? null);
+    });
+    return unsub;
   }, [roomCode]);
+
+  function getActiveCategory() {
+    return board.find(c => c.catId === activeTile.catId);
+  }
+
+  function getActiveTileData() {
+    return getActiveCategory().tiles.find(t => t.tileId === activeTile.tileId);
+  }
 
   return (
     <div className="player-main">
@@ -39,7 +48,7 @@ export default function PlayerBoard() {
 
       {boardExists === true && (
         <div className="player-board">
-          {board.board.map((cat) => (
+          {board.map((cat) => (
             <div key={cat.catId} className="player-category">
               <div className="player-category-title">
                 <p>{cat.category}</p>
@@ -55,6 +64,20 @@ export default function PlayerBoard() {
         </div>
       )}
 
+      {activeTile && (
+        <div className="question-modal">
+          <div>
+            <p>{getActiveCategory().category}</p>
+            <p>{getActiveTileData().points}</p>
+          </div>
+          <div>
+            {getActiveTileData().imageUrl !== "" && getActiveTileData().visible === true && (
+              <img src={`${getActiveTileData().imageUrl}`}></img>
+            )}
+            <p>{getActiveTileData().question}</p>
+          </div>
+        </div>
+      )}
 
     </div>
   );
