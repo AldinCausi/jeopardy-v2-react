@@ -68,6 +68,14 @@
 
 .save-btn-container {
     width: fit-content;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.save-btn-container p {
+    font-weight: bold;
+    font-size: 1rem;
 }
 
 .save-board-btn {

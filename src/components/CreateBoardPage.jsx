@@ -48,6 +48,9 @@ function generateRoomCode() {
   return code;
 }
 
+// Einzigartiger Code für den Raum
+const roomCode = generateRoomCode();
+
 export default function CreateBoardPage() {
   /*
   Initialer Zustand eines Boards, Standardtyp für Tiles ist 'text'
@@ -59,6 +62,8 @@ export default function CreateBoardPage() {
 
   // State für Daten, die aus der Form für die Daten der Tiles geholt werden
   const [formData, setFormData] = useState(createEmptyFormData());
+
+
 
   useEffect(() => {
     console.log("Board State: ", board);
@@ -88,7 +93,6 @@ export default function CreateBoardPage() {
   /*
   Funktionen, welche die Eingabe der Daten für die Tiles handhaben
   */
-
   function resetForm() {
     setFormData(createEmptyFormData());
   }
@@ -133,10 +137,8 @@ export default function CreateBoardPage() {
   Speichert das Board in Firestore
   */
   function saveBoardToDb() {
-    // Einzigartiger Code für den Raum
-    const roomCode = generateRoomCode();
 
-    const boardRef = doc(db, "boards", roomCode);
+    const boardRef = doc(db, "boards", roomCode); // roomCode oben initialisiert.
     setDoc(boardRef, {
       activeTile: null,
       board: board,
@@ -180,6 +182,7 @@ export default function CreateBoardPage() {
           <button className="save-board-btn" onClick={() => saveBoardToDb()}>
             Brett Speichern
           </button>
+          <p>Raum Code: { roomCode }</p>
         </div>
       </div>
 

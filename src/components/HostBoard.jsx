@@ -56,7 +56,9 @@ export default function HostBoard() {
     setShowQuestionModal(false);
     setTileClicked(null);
     const boardRef = doc(db, "boards", roomCode);
-    updateDoc(boardRef, { activeTile: null });
+    updateDoc(boardRef, {
+      activeTile: null
+    });
   }
 
   async function showImage() {
@@ -65,7 +67,7 @@ export default function HostBoard() {
         ? {
           ...c,
           tiles: c.tiles.map(t =>
-            t.tileId === tileClicked.tile.tileId ? { ...t, visible: true } : t
+            t.tileId === tileClicked.tile.tileId ? { ...t, visible: !t.visible } : t
           )
         }
         : c
@@ -97,7 +99,7 @@ export default function HostBoard() {
     const boardRef = doc(db, "boards", roomCode);
 
     await updateDoc(boardRef, {
-      board, resetBoard,
+      board: resetBoard,
       activeTile: null,
     });
 
@@ -151,7 +153,7 @@ export default function HostBoard() {
             <p>{tileClicked.tile.question}</p>
             {tileClicked.tile.imageUrl !== "" && (
               <>
-                <button onClick={() => showImage()}>Zeige Bild</button>
+                <button onClick={() => showImage()}>Bild On/Off</button>
                 {isImage && <img src={`${tileClicked.tile.imageUrl}`}></img>}
               </>
             )}
