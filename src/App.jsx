@@ -2,10 +2,83 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import "./App.css";
 import BoardSelector from "./components/BoardSelector";
+import { db } from "./firebase/firebaseConfig.js";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+
+
+function createPlayer(id) {
+  return {
+    id: id,
+    name: "",
+    points: ""
+  }
+}
+
 
 function App() {
   const [showForm, setShowForm] = useState(false);
   const [roomCode, setRoomCode] = useState(null);
+  const [gameExists, setGameExists] = useState(null);
+  const [nameErr, setNameErr] = useState(false);
+  const [roomErr, setRoomErr] = useState(false);
+
+  const [playerName, setPlayerName] = useState("");
+  const [players, setPlayers] = useState(() =>
+    Array.from({ length: 4 }).map((_, i) => createPlayer(i))
+  );
+
+  const navigate = useNavigate();
+
+  async function findGame() {
+    const boardRef = doc(db, "boards", roomCode);
+    const boardSnap = await getDoc(boardRef);
+    const exists = boardSnap.exists();
+    setGameExists(exists);
+    return exists;
+  }
+
+  async function addPlayer() {
+
+    const boardRef = doc(db, "boards", roomCode);
+    const boardSnap = await getDoc(boardRef);
+    const currentPlayers = boardSnap.data().players;
+
+
+    const freeSlotIndex = currentPlayers.findIndex(p => p.name === "");
+    if (freeSlotIndex === -1) {
+      setRoomErr(true);
+      return;
+    }
+
+    const updatedPlayers = currentPlayers.map((p, i) =>
+      i === freeSlotIndex ? { ...p, name: playerName } : p
+    );
+
+    setPlayers(updatedPlayers);
+
+    await updateDoc(boardRef, {
+      players: updatedPlayers
+    });
+  }
+
+  async function joinGame() {
+    setNameErr(false);
+    setRoomErr(false);
+
+    if (playerName === "") {
+      setNameErr(true);
+      return;
+    }
+    const exists = await findGame();
+    if (!exists) {
+      setRoomErr(true);
+      return;
+    }
+
+    await addPlayer();
+    navigate(`/game/${roomCode}`);
+  }
 
   return (
     <div className="app">
@@ -22,15 +95,25 @@ function App() {
 
       {showForm && (
         <div className="form-app">
-          <input placeholder="Suche einen Namen aus" />
+          <input
+            placeholder="Suche einen Namen aus"
+            value={playerName}
+            onChange={(e) => setPlayerName(e.target.value)}
+          />
           <input
             placeholder="Raum Code"
             value={roomCode}
             onChange={(e) => setRoomCode(e.target.value)}
           />
-          <Link to={`/game/${roomCode}`}>
-            <button>Raum beitreten</button>
-          </Link>
+
+          <button onClick={joinGame}>Raum beitreten</button>
+          {nameErr && (
+            <p>Gebe einen Namen ein.</p>
+          )}
+          {roomErr && (
+            <p>Ungültiger Raum Code.</p>
+          )}
+
         </div>
       )}
     </div>

@@ -142,6 +142,11 @@ export default function CreateBoardPage() {
     setDoc(boardRef, {
       activeTile: null,
       board: board,
+      players: Array.from({ length: 4 }).map((_, i) => ({
+        id: i,
+        name: "",
+        points: 0
+      })),
     });
   }
 
