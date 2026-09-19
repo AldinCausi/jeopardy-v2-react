@@ -1,23 +1,22 @@
-import "./style/Board.css";
 import "./HostBoard.css";
 import { useEffect, useState } from "react";
-import { useNavigate ,useParams, Link } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig.js";
 
 export default function HostBoard() {
-
   const { roomCode } = useParams();
   const navigate = useNavigate();
 
   const [boardExists, setBoardExists] = useState(null);
   const [board, setBoard] = useState(null);
+  const [players, setPlayers] = useState(null);
+
   const [tileClicked, setTileClicked] = useState(null);
   const [isImage, setIsImage] = useState(false);
 
   const [showQuestionModal, setShowQuestionModal] = useState(false);
   const [endGameModal, setEndGameModal] = useState(false);
-
 
   // Hole das Board das gehostet werden soll aus der Datenbank
   useEffect(() => {
@@ -27,6 +26,7 @@ export default function HostBoard() {
       if (boardSnap.exists()) {
         setBoardExists(true);
         setBoard(boardSnap.data().board);
+        setPlayers(boardSnap.data().players);
       } else {
         setBoardExists(false);
         setBoard(null);
@@ -130,11 +130,10 @@ export default function HostBoard() {
     });
 
     navigate("/");
-
   }
 
   return (
-    <div className="player-main">
+    <div className="host-main">
       {boardExists === null && <p>Lade Spiel...</p>}
 
       {boardExists === false && (
@@ -147,28 +146,40 @@ export default function HostBoard() {
       )}
 
       {boardExists === true && (
-        <div className="player-board">
-          {board.map((cat) => (
-            <div key={cat.catId} className="player-category">
-              <div className="player-category-title">
-                <p>{cat.category}</p>
-              </div>
-
-              {cat.tiles.map((tile) => (
-                <div
-                  key={tile.tileId}
-                  className={`player-tile ${tile.played ? "played" : ""}`}
-                  onClick={() => !tile.played && handleTileClick(cat, tile)}
-                >
-                  <p>{tile.points}</p>
+        <>
+          <div className="host-board">
+            {board.map((cat) => (
+              <div key={cat.catId} className="host-category">
+                <div className="host-category-title">
+                  <p>{cat.category}</p>
                 </div>
-              ))}
-            </div>
-          ))}
 
-          <button onClick={resetBoard}>Board zurücksetzen</button>
-          <button onClick={() => setEndGameModal(true)}>Spiel beenden</button>
-        </div>
+                {cat.tiles.map((tile) => (
+                  <div
+                    key={tile.tileId}
+                    className={`host-tile ${tile.played ? "played" : ""}`}
+                    onClick={() => !tile.played && handleTileClick(cat, tile)}
+                  >
+                    <p>{tile.points}</p>
+                  </div>
+                ))}
+              </div>
+            ))}
+            <button onClick={resetBoard}>Board zurücksetzen</button>
+            <button onClick={() => setEndGameModal(true)}>Spiel beenden</button>
+          </div>
+
+          <div className="host-players-grid">
+            {players.map((p) => (
+              <div
+                key={p.id}
+                className="host-player-grid-item"
+              >
+
+              </div>
+            ))}
+          </div>
+        </>
       )}
 
       {endGameModal && (
