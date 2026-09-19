@@ -34,7 +34,7 @@ function createEmptyFormData() {
     answer: "",
     type: "text",
     imageUrl: "",
-    visible: false
+    visible: false,
   };
 }
 
@@ -48,9 +48,6 @@ function generateRoomCode() {
   return code;
 }
 
-// Einzigartiger Code für den Raum
-const roomCode = generateRoomCode();
-
 export default function CreateBoardPage() {
   /*
   Initialer Zustand eines Boards, Standardtyp für Tiles ist 'text'
@@ -63,7 +60,12 @@ export default function CreateBoardPage() {
   // State für Daten, die aus der Form für die Daten der Tiles geholt werden
   const [formData, setFormData] = useState(createEmptyFormData());
 
+  const [boardName, setBoardName] = useState("");
+  const [boardNameErr, setBoardNameErr] = useState(false);
 
+  // Room Code State
+  const [roomCode] = useState(() => generateRoomCode());
+  const [showCodeModal, setShowCodeModal] = useState(false);
 
   useEffect(() => {
     console.log("Board State: ", board);
@@ -100,13 +102,18 @@ export default function CreateBoardPage() {
   function handleTileClick(catId, tileId) {
     setEditingTile({ catId, tileId });
 
-    const cat = board.find(c => c.catId === catId);
-    const tile = cat.tiles.find(t => t.tileId === tileId);
+    const cat = board.find((c) => c.catId === catId);
+    const tile = cat.tiles.find((t) => t.tileId === tileId);
     setFormData({ ...formData, ...tile });
   }
 
   function onFormChange(field, value) {
     setFormData({ ...formData, [field]: value });
+  }
+
+  function changeBoardName(value) {
+    setBoardName(value);
+    setBoardNameErr(false);
   }
 
   function handleCancelForm() {
@@ -137,17 +144,20 @@ export default function CreateBoardPage() {
   Speichert das Board in Firestore
   */
   function saveBoardToDb() {
+    if (boardName === "") {
+      setBoardNameErr(true);
+      return;
+    }
 
     const boardRef = doc(db, "boards", roomCode); // roomCode oben initialisiert.
     setDoc(boardRef, {
+      boardName: boardName,
       activeTile: null,
       board: board,
-      players: Array.from({ length: 4 }).map((_, i) => ({
-        id: i,
-        name: "",
-        points: 0
-      })),
+      players: []
     });
+
+    setShowCodeModal(true);
   }
 
   return (
@@ -174,7 +184,8 @@ export default function CreateBoardPage() {
                 <div
                   key={tile.tileId}
                   className="tile"
-                  onClick={() => handleTileClick(cat.catId, tile.tileId)}>
+                  onClick={() => handleTileClick(cat.catId, tile.tileId)}
+                >
                   <p>{tile.points}</p>
                   <p>{tile.question}</p>
                 </div>
@@ -187,9 +198,21 @@ export default function CreateBoardPage() {
           <button className="save-board-btn" onClick={() => saveBoardToDb()}>
             Brett Speichern
           </button>
-          <p>Raum Code: { roomCode }</p>
+          <input
+            placeholder="Name für das Board"
+            value={boardName}
+            onChange={(e) => changeBoardName(e.target.value)}
+          />
+          {boardNameErr && <p className="error-msg">Gebe dem Board einen Namen</p>}
         </div>
       </div>
+
+      {showCodeModal && (
+        <div className="code-modal">
+          <p>Raum Code: {roomCode}</p>
+          <button onClick={() => setShowCodeModal(false)}>Zurück</button>
+        </div>
+      )}
 
       <div className="form-wrapper">
         {editingTile && (

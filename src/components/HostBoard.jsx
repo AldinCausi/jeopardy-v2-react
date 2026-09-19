@@ -1,18 +1,25 @@
 import "./style/Board.css";
 import "./HostBoard.css";
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useNavigate ,useParams, Link } from "react-router-dom";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig.js";
 
 export default function HostBoard() {
+
   const { roomCode } = useParams();
+  const navigate = useNavigate();
+
   const [boardExists, setBoardExists] = useState(null);
   const [board, setBoard] = useState(null);
-  const [showQuestionModal, setShowQuestionModal] = useState(false);
   const [tileClicked, setTileClicked] = useState(null);
   const [isImage, setIsImage] = useState(false);
 
+  const [showQuestionModal, setShowQuestionModal] = useState(false);
+  const [endGameModal, setEndGameModal] = useState(false);
+
+
+  // Hole das Board das gehostet werden soll aus der Datenbank
   useEffect(() => {
     const getBoard = async () => {
       const boardRef = doc(db, "boards", roomCode);
@@ -57,20 +64,22 @@ export default function HostBoard() {
     setTileClicked(null);
     const boardRef = doc(db, "boards", roomCode);
     updateDoc(boardRef, {
-      activeTile: null
+      activeTile: null,
     });
   }
 
   async function showImage() {
-    const updatedBoard = board.map(c =>
+    const updatedBoard = board.map((c) =>
       c.catId === tileClicked.cat.catId
         ? {
-          ...c,
-          tiles: c.tiles.map(t =>
-            t.tileId === tileClicked.tile.tileId ? { ...t, visible: !t.visible } : t
-          )
-        }
-        : c
+            ...c,
+            tiles: c.tiles.map((t) =>
+              t.tileId === tileClicked.tile.tileId
+                ? { ...t, visible: !t.visible }
+                : t,
+            ),
+          }
+        : c,
     );
 
     setBoard(updatedBoard);
@@ -78,17 +87,17 @@ export default function HostBoard() {
 
     const boardRef = doc(db, "boards", roomCode);
     await updateDoc(boardRef, {
-      board: updatedBoard
+      board: updatedBoard,
     });
   }
 
-  async function resetBoard() {
+  function resetBoardHelper() {
     const resetBoard = board.map((c) => ({
       ...c,
       tiles: c.tiles.map((t) => ({
         ...t,
         played: false,
-        visible: false
+        visible: false,
       })),
     }));
     setBoard(resetBoard);
@@ -96,12 +105,31 @@ export default function HostBoard() {
     setShowQuestionModal(false);
     setIsImage(false);
 
-    const boardRef = doc(db, "boards", roomCode);
+    return resetBoard;
+  }
 
+  async function resetBoard() {
+    const emptyBoard = resetBoardHelper();
+
+    const boardRef = doc(db, "boards", roomCode);
     await updateDoc(boardRef, {
-      board: resetBoard,
+      board: emptyBoard,
       activeTile: null,
     });
+  }
+
+  async function endGame() {
+    const emptyBoard = resetBoardHelper();
+
+    const boardRef = doc(db, "boards", roomCode);
+    await updateDoc(boardRef, {
+      boardName: "",
+      board: emptyBoard,
+      players: [],
+      activeTile: null,
+    });
+
+    navigate("/");
 
   }
 
@@ -138,9 +166,18 @@ export default function HostBoard() {
             </div>
           ))}
 
-          <button onClick={resetBoard}>
-            Board zurücksetzen
-          </button>
+          <button onClick={resetBoard}>Board zurücksetzen</button>
+          <button onClick={() => setEndGameModal(true)}>Spiel beenden</button>
+        </div>
+      )}
+
+      {endGameModal && (
+        <div className="end-game-modal">
+          <p>Spiel beenden</p>
+          <div>
+            <button onClick={endGame}>Ja</button>
+            <button onClick={() => setEndGameModal(false)}>Nein</button>
+          </div>
         </div>
       )}
       {showQuestionModal && (

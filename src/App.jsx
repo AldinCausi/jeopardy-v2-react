@@ -18,10 +18,11 @@ function createPlayer(id) {
 
 function App() {
   const [showForm, setShowForm] = useState(false);
-  const [roomCode, setRoomCode] = useState(null);
+  const [roomCode, setRoomCode] = useState("");
   const [gameExists, setGameExists] = useState(null);
   const [nameErr, setNameErr] = useState(false);
   const [roomErr, setRoomErr] = useState(false);
+  const [maxPlayersReached, setMaxPlayersReached] = useState(false);
 
   const [playerName, setPlayerName] = useState("");
   const [players, setPlayers] = useState(() =>
@@ -44,22 +45,26 @@ function App() {
     const boardSnap = await getDoc(boardRef);
     const currentPlayers = boardSnap.data().players;
 
-
-    const freeSlotIndex = currentPlayers.findIndex(p => p.name === "");
-    if (freeSlotIndex === -1) {
-      setRoomErr(true);
-      return;
+    if (currentPlayers.length === 4) {
+      setMaxPlayersReached(true);
+      return false;
     }
 
-    const updatedPlayers = currentPlayers.map((p, i) =>
-      i === freeSlotIndex ? { ...p, name: playerName } : p
-    );
+    const newPlayer = {
+      id: currentPlayers.length,
+      name: playerName,
+      points: 0
+    }
+
+    const updatedPlayers = [...currentPlayers, newPlayer]
 
     setPlayers(updatedPlayers);
 
     await updateDoc(boardRef, {
       players: updatedPlayers
     });
+
+    return true;
   }
 
   async function joinGame() {
@@ -70,13 +75,20 @@ function App() {
       setNameErr(true);
       return;
     }
+
+    if (roomCode === "") {
+      setRoomErr(true);
+      return;
+    }
+
     const exists = await findGame();
     if (!exists) {
       setRoomErr(true);
       return;
     }
 
-    await addPlayer();
+    const added = await addPlayer();
+    if (!added) return;
     navigate(`/game/${roomCode}`);
   }
 
@@ -108,10 +120,13 @@ function App() {
 
           <button onClick={joinGame}>Raum beitreten</button>
           {nameErr && (
-            <p>Gebe einen Namen ein.</p>
+            <p className="error-msg">Gebe einen Namen ein.</p>
           )}
           {roomErr && (
-            <p>Ungültiger Raum Code.</p>
+            <p className="error-msg">Ungültiger Raum Code.</p>
+          )}
+          {maxPlayersReached && (
+            <p className="error-msg">Kein Platz für weitere Spieler.</p>
           )}
 
         </div>

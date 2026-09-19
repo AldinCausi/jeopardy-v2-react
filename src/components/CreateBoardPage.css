@@ -35,11 +35,12 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
+    gap: 0.5rem;
     height: 100%;
 }
 
 .category-input input {
+
     padding: 0.5rem;
     outline: none;
     font-weight: bold;
@@ -50,6 +51,9 @@
 
 .category-input button {
     border: none;
+    border-radius: 2px;
+    text-shadow: 1px 1px 2px black;
+    box-sizing: 1px 1px 5px black;
     padding: 0.3rem 0.5rem;
     background-color: var(--accent);
     color: var(--tile-bg);
@@ -78,14 +82,27 @@
     font-size: 1rem;
 }
 
+
+.save-btn-container input {
+    padding: 0.5rem;
+    outline: none;
+    font-weight: bold;
+    text-align: center;
+    background-color: var(--tile-bg);
+    color: var(--text);
+}
+
 .save-board-btn {
     border: none;
+    border-radius: 5px;
+    box-shadow: 0 0 10px black;
     padding: 1.2rem;
     background-color: var(--accent);
     font-weight: bold;
     font-size: 1.1rem;
-
+    text-shadow: 2px 2px 2px black;
     color: var(--tile-bg);
+
 }
 
 .save-board-btn:hover {
@@ -94,4 +111,38 @@
 
 .form-wrapper {
     height: fit-content;
+}
+
+.code-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.code-modal p {
+    font-weight: bold;
+    font-size: 2rem;
+    color: var(--accent);
+    text-shadow: 2px 2px 2px black;
+}
+
+.code-modal button {
+    border: none;
+    border-radius: 5px;
+    box-shadow: 0 0 10px black;
+    padding: 1.2rem;
+    background-color: var(--accent);
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-shadow: 2px 2px 2px black;
+    color: var(--tile-bg);
+}
+.code-modal button:hover {
+    background-color: var(--accent-hover);
 }
