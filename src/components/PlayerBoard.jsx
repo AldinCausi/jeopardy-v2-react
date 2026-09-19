@@ -56,7 +56,7 @@ export default function PlayerBoard() {
               </div>
 
               {cat.tiles.map((tile) => (
-                <div key={tile.tileId} className="player-tile">
+                <div key={tile.tileId} className={`player-tile ${tile.played ? "played": ""}`}>
                   <p>{tile.points}</p>
                 </div>
               ))}

@@ -1,7 +1,7 @@
 import "./HostBoard.css";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig.js";
 
 export default function HostBoard() {
@@ -20,19 +20,18 @@ export default function HostBoard() {
 
   // Hole das Board das gehostet werden soll aus der Datenbank
   useEffect(() => {
-    const getBoard = async () => {
-      const boardRef = doc(db, "boards", roomCode);
-      const boardSnap = await getDoc(boardRef);
-      if (boardSnap.exists()) {
-        setBoardExists(true);
-        setBoard(boardSnap.data().board);
-        setPlayers(boardSnap.data().players);
-      } else {
+    const boardRef = doc(db, "boards", roomCode);
+    const unsub = onSnapshot(boardRef, (snapshot) => {
+      if (!snapshot.exists()) {
         setBoardExists(false);
-        setBoard(null);
+        return;
       }
-    };
-    getBoard();
+      const data = snapshot.data();
+      setBoardExists(true);
+      setBoard(data.board);
+      setPlayers(data.players);
+    });
+    return unsub;
   }, [roomCode]);
 
   async function handleTileClick(cat, tile) {
@@ -61,7 +60,6 @@ export default function HostBoard() {
 
   function closeQuestion() {
     setShowQuestionModal(false);
-    setTileClicked(null);
     const boardRef = doc(db, "boards", roomCode);
     updateDoc(boardRef, {
       activeTile: null,
@@ -100,7 +98,14 @@ export default function HostBoard() {
         visible: false,
       })),
     }));
+
+    const resetPlayers = players.map((p) => ({
+      ...p,
+      points: 0
+    }));
+
     setBoard(resetBoard);
+    setPlayers(resetPlayers)
     setTileClicked(null);
     setShowQuestionModal(false);
     setIsImage(false);
@@ -130,6 +135,33 @@ export default function HostBoard() {
     });
 
     navigate("/");
+  }
+
+  async function updatePlayerData(playerId, value, correct) {
+    if (tileClicked === null) {
+      return;
+    }
+    let pointsToAdd = parseInt(value);
+    if (!correct) {
+      pointsToAdd = -(pointsToAdd / 2)
+    }
+
+    const updatedPlayers = players.map(p =>
+      p.id === playerId
+        ?
+        {
+          ...p,
+          points: p.points + pointsToAdd
+        } : p
+    );
+
+    setPlayers(updatedPlayers);
+
+    const boardRef = doc(db, "boards", roomCode);
+    await updateDoc(boardRef, {
+      players: updatedPlayers
+    })
+
   }
 
   return (
@@ -167,15 +199,18 @@ export default function HostBoard() {
             ))}
             <button onClick={resetBoard}>Board zurücksetzen</button>
             <button onClick={() => setEndGameModal(true)}>Spiel beenden</button>
+            <p>Raum Code: {roomCode}</p>
           </div>
 
           <div className="host-players-grid">
             {players.map((p) => (
-              <div
-                key={p.id}
-                className="host-player-grid-item"
-              >
-
+              <div key={p.id} className="host-player-grid-item">
+                <p>{p.name}</p>
+                <div className="points">
+                  <p>Punkte: {p.points}</p>
+                  <button onClick={() => updatePlayerData(p.id, tileClicked.tile.points, true)}> + </button>
+                  <button onClick={() => updatePlayerData(p.id, tileClicked.tile.points, false)}> - </button>
+                </div>
               </div>
             ))}
           </div>

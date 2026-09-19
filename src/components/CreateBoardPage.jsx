@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase/firebaseConfig.js";
 import TileForm from "./TileForm.jsx";
+import { Link, useNavigate } from "react-router-dom";
 /*
 Fabriken für Board und Form Strukturen.
 */
@@ -49,6 +50,9 @@ function generateRoomCode() {
 }
 
 export default function CreateBoardPage() {
+
+  const navigate = useNavigate();
+
   /*
   Initialer Zustand eines Boards, Standardtyp für Tiles ist 'text'
   */
@@ -210,6 +214,7 @@ export default function CreateBoardPage() {
       {showCodeModal && (
         <div className="code-modal">
           <p>Raum Code: {roomCode}</p>
+          <Link to={`/host/${roomCode}`}><button>Host</button></Link>
           <button onClick={() => setShowCodeModal(false)}>Zurück</button>
         </div>
       )}
