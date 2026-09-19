@@ -234,6 +234,7 @@ export default function HostBoard() {
           </div>
           <div>
             <p>{tileClicked.tile.question}</p>
+            <p>{tileClicked.tile.answer}</p>
             {tileClicked.tile.imageUrl !== "" && (
               <>
                 <button onClick={() => showImage()}>Bild On/Off</button>

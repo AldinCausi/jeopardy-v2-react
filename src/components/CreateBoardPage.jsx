@@ -23,7 +23,6 @@ function createCategories(id) {
   return {
     catId: id,
     category: "",
-    locked: false,
     tiles: Array.from({ length: 5 }).map((_, j) => createTile(j)),
   };
 }
@@ -50,7 +49,6 @@ function generateRoomCode() {
 }
 
 export default function CreateBoardPage() {
-
   const navigate = useNavigate();
 
   /*
@@ -84,14 +82,6 @@ export default function CreateBoardPage() {
     setBoard(
       board.map((cat) =>
         cat.catId === id ? { ...cat, category: value } : cat,
-      ),
-    );
-  }
-
-  function lockCategoryInput(id) {
-    setBoard(
-      board.map((cat) =>
-        cat.catId === id ? { ...cat, locked: !cat.locked } : cat,
       ),
     );
   }
@@ -158,7 +148,7 @@ export default function CreateBoardPage() {
       boardName: boardName,
       activeTile: null,
       board: board,
-      players: []
+      players: [],
     });
 
     setShowCodeModal(true);
@@ -179,9 +169,6 @@ export default function CreateBoardPage() {
                     handleSaveCategoryName(cat.catId, e.target.value)
                   }
                 />
-                <button onClick={() => lockCategoryInput(cat.catId)}>
-                  {cat.locked ? "Ändern" : "Speichern"}
-                </button>
               </div>
 
               {cat.tiles.map((tile) => (
@@ -190,6 +177,7 @@ export default function CreateBoardPage() {
                   className="tile"
                   onClick={() => handleTileClick(cat.catId, tile.tileId)}
                 >
+
                   <p>{tile.points}</p>
                   <p>{tile.question}</p>
                 </div>
@@ -198,7 +186,7 @@ export default function CreateBoardPage() {
           ))}
         </div>
 
-        <div className="save-btn-container">
+        <div className="save-btn-wrapper">
           <button className="save-board-btn" onClick={() => saveBoardToDb()}>
             Brett Speichern
           </button>
@@ -207,20 +195,24 @@ export default function CreateBoardPage() {
             value={boardName}
             onChange={(e) => changeBoardName(e.target.value)}
           />
-          {boardNameErr && <p className="error-msg">Gebe dem Board einen Namen</p>}
+          {boardNameErr && (
+            <p className="error-msg">Gebe dem Board einen Namen</p>
+          )}
         </div>
       </div>
 
       {showCodeModal && (
         <div className="code-modal">
           <p>Raum Code: {roomCode}</p>
-          <Link to={`/host/${roomCode}`}><button>Host</button></Link>
+          <Link to={`/host/${roomCode}`}>
+            <button>Host</button>
+          </Link>
           <button onClick={() => setShowCodeModal(false)}>Zurück</button>
         </div>
       )}
 
-      <div className="form-wrapper">
-        {editingTile && (
+      {editingTile && (
+        <div className="form-modal">
           <TileForm
             formData={formData}
             onFormChange={onFormChange}
@@ -228,8 +220,8 @@ export default function CreateBoardPage() {
             onFormReset={resetForm}
             onCancel={handleCancelForm}
           />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
