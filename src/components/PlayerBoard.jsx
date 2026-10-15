@@ -1,5 +1,4 @@
 
-import "./PlayerBoard.css";
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { doc, onSnapshot } from "firebase/firestore";

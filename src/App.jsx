@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import "./App.css";
 import BoardSelector from "./components/BoardSelector";
 import { db } from "./firebase/firebaseConfig.js";
 import { doc, getDoc, updateDoc } from "firebase/firestore";

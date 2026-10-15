@@ -1,4 +1,4 @@
-import "./HostBoard.css";
+
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
