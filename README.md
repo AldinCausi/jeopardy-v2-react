@@ -48,14 +48,6 @@ npm run dev
 
 Die App läuft dann unter der von Vite ausgegebenen Adresse (standardmäßig `http://localhost:5173`).
 
-### Eigenes Firebase-Projekt verwenden
-
-Wenn du eine eigene Datenbank nutzen möchtest:
-
-1. Erstelle ein Firebase-Projekt und aktiviere Firestore.
-2. Ersetze die Werte in `src/firebase/firebaseConfig.js` durch die Konfiguration deiner Web-App.
-3. Lege in Firestore Regeln fest, die Lesen und Schreiben auf die Collection `boards` erlauben.
-
 ## Spielablauf
 
 1. Host: „Erstelle ein Board“, Kategorien und Felder ausfüllen, speichern und den Raumcode weitergeben.
@@ -70,3 +62,4 @@ Der Fokus liegt auf der Funktionalität, das Styling wird derzeit neu aufgebaut.
 - Neues Styling
 - Authentifizierung für Hosts und strengere Firestore-Regeln
 - Punktestände auch in der Spieler-Ansicht
+- Buzzer für die Mitspielenden
